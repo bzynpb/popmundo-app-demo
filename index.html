@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Popmundo App Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #EBEBEB;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .header {
+    background: linear-gradient(180deg, #4A6070 0%, #7A8E9A 100%);
+    width: 100%;
+    max-width: 480px;
+    border-radius: 14px 14px 0 0;
+    padding: 22px 24px 18px;
+    text-align: center;
+  }
+  .header h1 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+  .header p {
+    color: rgba(255,255,255,0.72);
+    font-size: 12px;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 0 0 14px 14px;
+    padding: 28px 24px 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+  .subtitle {
+    color: #9B9B9B;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #C0C0C0;
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+  .screens {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .screen-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #F5F5F5;
+    border: 1px solid #E8E8E8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .screen-btn:hover { background: #EAEAEA; }
+  .screen-num {
+    background: linear-gradient(180deg, #4A6070 0%, #7A8E9A 100%);
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .screen-info { flex: 1; }
+  .screen-title {
+    color: #333333;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .screen-desc {
+    color: #9B9B9B;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .arrow { color: #0099AA; font-size: 20px; font-weight: bold; }
+
+  .pitch-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #F0F9FA;
+    border: 1px solid #C8E8EC;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: background 0.15s;
+    margin-bottom: 10px;
+  }
+  .pitch-btn:hover { background: #E4F4F7; }
+  .pitch-icon {
+    background: #0099AA;
+    color: #fff;
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pitch-title {
+    color: #333333;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .pitch-desc {
+    color: #9B9B9B;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #EEEEEE;
+    margin: 20px 0;
+  }
+  .footer {
+    margin-top: 24px;
+    text-align: center;
+    color: #C8C8C8;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>popmundo</h1>
+  <p>Mobile App · Community Proposal</p>
+</div>
+
+<div class="card">
+  <p class="subtitle">An interactive mobile app concept built around Popmundo.<br>Designed by a long-time player.</p>
+
+  <div class="section-label">App Screens</div>
+  <div class="screens">
+    <a href="01-home.html" class="screen-btn">
+      <div class="screen-num">01</div>
+      <div class="screen-info">
+        <div class="screen-title">Home Screen</div>
+        <div class="screen-desc">Daily schedule, push alerts, health &amp; transport warnings</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a href="02-character.html" class="screen-btn">
+      <div class="screen-num">02</div>
+      <div class="screen-info">
+        <div class="screen-title">Character Profile</div>
+        <div class="screen-desc">Stats, focus activities, recent attention &amp; diary</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">Proposal</div>
+  <a href="Popmundo-App-Pitch/index.html" class="pitch-btn">
+    <div class="pitch-icon">▶</div>
+    <div class="screen-info">
+      <div class="pitch-title">View Pitch Deck</div>
+      <div class="pitch-desc">Interactive presentation — opens in browser</div>
+    </div>
+    <div class="arrow" style="color:#0099AA">›</div>
+  </a>
+  <a href="Popmundo-App-Pitch.pdf" class="pitch-btn">
+    <div class="pitch-icon">📄</div>
+    <div class="screen-info">
+      <div class="pitch-title">Download PDF</div>
+      <div class="pitch-desc">Pitch deck as PDF</div>
+    </div>
+    <div class="arrow" style="color:#0099AA">›</div>
+  </a>
+
+  <div class="footer">built with love · popmundo</div>
+</div>
+
+</body>
+</html>

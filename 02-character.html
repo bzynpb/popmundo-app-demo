@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Popmundo App — Character Profile</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #D0D0D0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 30px 20px 40px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .page-label {
+    font-size: 12px; color: #888; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+
+  .phone {
+    width: 375px; background: #EBEBEB; border-radius: 40px;
+    overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    border: 8px solid #1A1A1A; position: relative;
+  }
+
+  .status-bar {
+    background: #3A5060; color: #FFFFFF; font-size: 11px;
+    font-weight: bold; display: flex; justify-content: space-between;
+    align-items: center; padding: 8px 18px 6px;
+  }
+  .status-bar .time { font-size: 13px; font-weight: bold; }
+  .status-bar .icons { display: flex; gap: 5px; font-size: 11px; }
+
+  .ppm-header {
+    background: linear-gradient(180deg, #4A6070 0%, #7A8E9A 100%);
+    padding: 8px 14px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .ppm-logo {
+    font-size: 22px; font-style: italic; font-weight: 900;
+    color: #FFFFFF; letter-spacing: 0.5px;
+    text-shadow: 2px 2px 0px #2A3A44, 1px 1px 0px #2A3A44, -1px 0px 0px rgba(0,0,0,0.3);
+    font-family: Arial Rounded MT Bold, Arial Black, Arial, sans-serif;
+  }
+  .header-icons { display: flex; gap: 14px; color: #DDDDDD; font-size: 16px; }
+
+  .nav-bar {
+    background: #3D5060; padding: 0; overflow-x: auto;
+    white-space: nowrap; scrollbar-width: none; border-bottom: 1px solid #222;
+  }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-bar a {
+    display: inline-block; color: #D8E4EC; font-size: 11px;
+    padding: 7px 10px; text-decoration: none; border-right: 1px solid #2E4050;
+  }
+  .nav-bar a.active { color: #FFFFFF; background: #0099AA; }
+
+  .notif-bar {
+    background: #F0F0F0; border-bottom: 1px solid #D8D8D8;
+    padding: 5px 10px; font-size: 10px; color: #888; text-align: center;
+  }
+
+  .content {
+    overflow-y: auto; max-height: 580px;
+    scrollbar-width: none; background: #EBEBEB;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* ── PROFILE HEADER ── */
+  .profile-header {
+    background: #FFFFFF; border-bottom: 1px solid #D8D8D8; padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .profile-name { font-size: 16px; font-weight: bold; color: #333; }
+  .profile-name .vip { color: #FFB300; font-size: 14px; }
+  .profile-icons { display: flex; gap: 6px; font-size: 20px; }
+
+  /* ── PROFILE CARD ── */
+  .profile-card {
+    background: #FFFFFF; border-bottom: 1px solid #D8D8D8; padding: 10px 12px;
+  }
+  .profile-photo-row {
+    display: flex; gap: 10px; margin-bottom: 10px;
+  }
+  .profile-photo {
+    width: 90px; height: 100px; border-radius: 4px;
+    overflow: hidden; flex-shrink: 0; border: 2px solid #D0D0D0;
+    background: #CCC;
+  }
+  .profile-photo img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top;
+  }
+  .profile-bio {
+    flex: 1; font-size: 11px; color: #333; line-height: 1.55;
+  }
+  .profile-bio a { color: #0099AA; text-decoration: none; }
+  .profile-bio b { color: #222; }
+
+  /* Focus / activities row */
+  .profile-focus {
+    background: #F7F7F7; border: 1px solid #E0E0E0; border-radius: 4px;
+    padding: 8px 10px; margin-top: 2px; font-size: 11px; color: #444;
+    line-height: 1.5;
+  }
+  .profile-focus a { color: #0099AA; text-decoration: none; font-weight: bold; }
+  .focus-edit-hint {
+    font-size: 10px; color: #AAA; margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* Quote / pinned message */
+  .profile-quote {
+    margin-top: 10px;
+    background: #F0F6F8; border: 1px solid #C8DDE4;
+    border-radius: 4px; padding: 8px 10px;
+    font-size: 11px; color: #555; font-style: italic; line-height: 1.5;
+  }
+
+  /* ── STATS BLOCK — 3 invisible columns, all same height ── */
+  .stats-card {
+    background: #FFFFFF; border-bottom: 1px solid #D8D8D8;
+    padding: 0; display: flex; gap: 0; align-items: stretch;
+  }
+
+  /* All 3 cols: same top/bottom padding so they start & end at same point */
+  .stats-col1, .stats-col2, .stats-col3 { padding: 10px 0; }
+
+  /* Col 1 */
+  .stats-col1 { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding-left: 10px; padding-right: 8px; border-right: 1px solid #EEEEEE; min-width: 64px; justify-content: center; }
+  .state-label {
+    font-size: 10px; color: #555; white-space: nowrap;
+    display: flex; align-items: center; gap: 4px; height: 18px;
+  }
+  .state-label.highlight { color: #0099AA; font-weight: bold; }
+  .state-label .s-icon { font-size: 11px; }
+
+  /* Col 2 */
+  .stats-col2 { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-left: 8px; padding-right: 8px; border-right: 1px solid #EEEEEE; justify-content: center; }
+  .bar-row { display: flex; align-items: center; gap: 5px; height: 18px; }
+  .bar-emoji { font-size: 13px; flex-shrink: 0; width: 16px; text-align: center; }
+  .bar-track { flex: 1; background: #E0E0E0; border-radius: 2px; height: 10px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-fill.green  { background: #68BF5A; }
+  .bar-fill.red    { background: #D94040; animation: pulse 1.4s infinite; }
+  .bar-fill.yellow { background: #E8B840; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+
+  /* Col 3 */
+  .stats-col3 { display: flex; flex-direction: column; gap: 5px; padding-left: 8px; padding-right: 10px; min-width: 86px; flex-shrink: 0; justify-content: center; }
+  .pts-row { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+  .pts-key { font-size: 9px; color: #9B9B9B; flex-shrink: 0; }
+  .pts-val { font-size: 10px; font-weight: bold; color: #333; }
+  .online-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #68BF5A; margin-right: 3px; vertical-align: middle; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    background: #6A8090; color: #FFFFFF; font-size: 12px;
+    font-weight: bold; padding: 5px 10px;
+  }
+
+  /* ── SOCIAL FEED ── */
+  .social-block { background: #FFFFFF; border-bottom: 1px solid #D8D8D8; }
+
+  /* Single-row: avatar | name | buttons — all vertically centered */
+  .friend-row {
+    padding: 8px 12px; border-bottom: 1px solid #F0F0F0;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .friend-row:last-child { border-bottom: none; }
+
+  .friend-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: bold; color: #fff; flex-shrink: 0;
+    border: 2px solid #D8D8D8;
+  }
+
+  /* city dot (small) kept as subtle indicator, no text */
+  .city-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .city-dot.same { background: #68BF5A; }
+  .city-dot.diff { background: #E87030; }
+
+  .friend-name {
+    flex: 1; font-size: 12px; font-weight: bold; color: #0099AA;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+
+  /* Buttons side by side on same row */
+  .friend-btns { display: flex; flex-direction: row; gap: 5px; flex-shrink: 0; }
+  .btn-action {
+    border: none; border-radius: 4px; font-size: 10px;
+    font-weight: bold; cursor: pointer; padding: 5px 8px;
+    white-space: nowrap; text-align: center;
+    transition: opacity 0.15s;
+  }
+  .btn-action:hover { opacity: 0.82; }
+  .btn-travel   { background: #68BF5A; color: #FFFFFF; }   /* same as interact */
+  .btn-interact { background: #68BF5A; color: #FFFFFF; }
+  .btn-call     { background: #0099AA; color: #FFFFFF; }
+
+  /* ── DIARY ── */
+  .diary-block { background: #FFFFFF; border-bottom: 1px solid #D8D8D8; }
+  .diary-entry {
+    padding: 8px 12px; font-size: 11px; color: #444;
+    border-bottom: 1px solid #F2F2F2; line-height: 1.5;
+  }
+  .diary-entry:last-child { border-bottom: none; }
+  .diary-entry a { color: #0099AA; text-decoration: none; }
+  .diary-entry b { color: #292929; }
+
+  /* ── FOLLOWING (single) ── */
+  .following-block { background: #FFFFFF; border-bottom: 1px solid #D8D8D8; }
+  .follow-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; font-size: 11px;
+  }
+  .follow-left { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+  .follow-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #7B68C8; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 11px; font-weight: bold;
+    border: 2px solid #D0D0D0; flex-shrink: 0;
+  }
+  .follow-name { color: #0099AA; font-weight: bold; font-size: 12px; }
+  .follow-detail { color: #999; font-size: 10px; }
+  .btn-follow-active {
+    background: #0099AA; border: none; color: #fff;
+    border-radius: 3px; font-size: 10px; padding: 4px 10px;
+    cursor: pointer; font-weight: bold; flex-shrink: 0;
+  }
+  .btn-follow-active:hover { background: #D94040; }
+  .follow-status { font-size: 10px; font-style: italic; margin-top: 1px; }
+  .follow-status.online  { color: #3A8A2A; }
+  .follow-status.offline { color: #AAAAAA; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    background: #3A5060; border-top: 1px solid #2A3C48;
+    display: flex; justify-content: space-around; padding: 8px 0 10px;
+  }
+  .nav-tab {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 3px; cursor: pointer; color: #888; font-size: 9px;
+    text-transform: uppercase; letter-spacing: 0.3px; padding: 0 6px;
+    position: relative;
+  }
+  .nav-tab .nav-icon { font-size: 18px; }
+  .nav-tab.active { color: #0099AA; }
+  .nav-badge {
+    position: absolute; top: -2px; right: 0px;
+    background: #D94040; color: white; font-size: 8px;
+    font-weight: bold; width: 14px; height: 14px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Toast */
+  .toast {
+    display: none; position: absolute;
+    bottom: 70px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.75); color: #fff;
+    font-size: 11px; padding: 7px 14px; border-radius: 20px;
+    white-space: nowrap; z-index: 200;
+    animation: fadeout 2s forwards;
+  }
+  @keyframes fadeout { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+
+  /* Legend */
+  
+</style>
+</head>
+<body>
+
+<div class="page-label">Screen 02 / Character Profile · Draft for Review</div>
+
+<div class="phone">
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="icons"><span>▲▲▲</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+
+  <!-- Header -->
+  <div class="ppm-header">
+    <div class="ppm-logo">pop<span>mundo</span></div>
+    <div class="header-icons"><span>⬇</span><span>☰</span></div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav-bar">
+    <a href="01-home.html">Welcome</a>
+    <a href="#">City</a>
+    <a href="#">Locale</a>
+    <a href="#" class="active">Character</a>
+    <a href="#">Artist</a>
+    <a href="#">Company</a>
+    <a href="#">Guide</a>
+    <a href="#">Charts</a>
+  </div>
+
+  <!-- Notification bar -->
+  <div class="notif-bar">No new info to display.</div>
+
+  <!-- Scrollable content -->
+  <div class="content">
+
+    <!-- ── CHARACTER NAME + RELATIONSHIP ICONS ── -->
+    <div class="profile-header">
+      <div class="profile-name">Audrey Bliss <span class="vip">★</span></div>
+      <div class="profile-icons">
+        <span title="Relationship">💛</span>
+        <span title="Trophies">🏆</span>
+        <span title="Ribbons">🎀</span>
+      </div>
+    </div>
+
+    <!-- ── PROFILE CARD ── -->
+    <div class="profile-card">
+      <div class="profile-photo-row">
+        <!-- Profile photo -->
+        <div class="profile-photo">
+          <img src="audrey-the-young.png" alt="Audrey Bliss" />
+        </div>
+        <!-- Bio text -->
+        <div class="profile-bio">
+          Audrey is <b>19 years old</b>. She is the Acoustic Guitarist of
+          <a href="#">We Skipped The Light Fandango</a>.
+          Audrey is also known as <b>"Audrey the Babe"</b>.
+          Audrey is located in <a href="#">Tallinn</a> at
+          <a href="#">Ray's Gym Tallinn</a>.
+        </div>
+      </div>
+
+      <!-- Focus / activities -->
+      <div class="profile-focus">
+        Audrey likes to <a href="#" onclick="showToast('Edit focus: Exercise at gym')">exercise at the gym</a>
+        during off hours and is trying to
+        <a href="#" onclick="showToast('Edit focus: Talk to media')">talk to media</a>
+        in order to get ahead professionally.
+        <div class="focus-edit-hint">
+          <span>⚙️</span>
+          <span>Tap to change focus activities</span>
+        </div>
+      </div>
+
+      <!-- Pinned quote -->
+      <div class="profile-quote">
+        After all this time?<br>
+        — Always...<br>
+        👊 John 👊
+      </div>
+    </div>
+
+    <!-- ── CHARACTER STATS — 3 invisible columns ── -->
+    <div class="stats-card">
+
+      <!-- Column 1: state labels -->
+      <div class="stats-col1">
+        <div class="state-label">
+          <span class="s-icon">☮️</span> Peaceful
+        </div>
+        <div class="state-label highlight">
+          <span class="s-icon">💛</span> Normal
+        </div>
+        <div class="state-label" style="cursor:pointer;" onclick="showToast('Opening settings...')">
+          <span class="s-icon">⚙️</span> Settings
+        </div>
+      </div>
+
+      <!-- Column 2: emoji + bar same line -->
+      <div class="stats-col2">
+        <div class="bar-row">
+          <span class="bar-emoji">😊</span>
+          <div class="bar-track"><div class="bar-fill green" style="width:95%"></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-emoji">❤️</span>
+          <div class="bar-track"><div class="bar-fill red" style="width:15%"></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-emoji">⭐</span>
+          <div class="bar-track"><div class="bar-fill yellow" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <!-- Column 3: key value same line -->
+      <div class="stats-col3">
+        <div class="pts-row"><span class="pts-key">Game:</span><span class="pts-val">Popmundo</span></div>
+        <div class="pts-row"><span class="pts-key">Points:</span><span class="pts-val">2,670</span></div>
+        <div class="pts-row"><span class="pts-key">Days:</span><span class="pts-val">2,555</span></div>
+        <div class="pts-row"><span class="pts-key">Status:</span><span class="pts-val"><span class="online-dot"></span>Mobile</span></div>
+      </div>
+
+    </div>
+
+    <!-- ── RECENT ATTENTION FROM FRIENDS ── -->
+    <div class="section-header">Recent Attention from Friends</div>
+    <div class="social-block">
+
+      <div class="friend-row">
+        <div class="friend-avatar" style="background:#7B68C8;">BD</div>
+        <div class="city-dot same"></div>
+        <span class="friend-name">Bengü Doğanata</span>
+        <div class="friend-btns">
+          <button class="btn-action btn-interact" onclick="showToast('Interact request sent to Bengü!')">✋ Interact</button>
+          <button class="btn-action btn-call"     onclick="showToast('Calling Bengü...')">📞 Call</button>
+        </div>
+      </div>
+
+      <div class="friend-row">
+        <div class="friend-avatar" style="background:#4A8A6A;">TT</div>
+        <div class="city-dot diff"></div>
+        <span class="friend-name">Tatu-Pekka Tervaskangas</span>
+        <div class="friend-btns">
+          <button class="btn-action btn-travel" onclick="showToast('Arranging travel...')">✈️ Travel</button>
+          <button class="btn-action btn-call"   onclick="showToast('Calling Tatu-Pekka...')">📞 Call</button>
+        </div>
+      </div>
+
+      <div class="friend-row">
+        <div class="friend-avatar" style="background:#C07840;">NO</div>
+        <div class="city-dot same"></div>
+        <span class="friend-name">Nesimi Okanlar</span>
+        <div class="friend-btns">
+          <button class="btn-action btn-interact" onclick="showToast('Interact request sent to Nesimi!')">✋ Interact</button>
+          <button class="btn-action btn-call"     onclick="showToast('Calling Nesimi...')">📞 Call</button>
+        </div>
+      </div>
+
+      <div class="friend-row">
+        <div class="friend-avatar" style="background:#5A6EA8;">NA</div>
+        <div class="city-dot diff"></div>
+        <span class="friend-name">Nazım Altun</span>
+        <div class="friend-btns">
+          <button class="btn-action btn-travel" onclick="showToast('Arranging travel...')">✈️ Travel</button>
+          <button class="btn-action btn-call"   onclick="showToast('Calling Nazım...')">📞 Call</button>
+        </div>
+      </div>
+
+      <div class="friend-row">
+        <div class="friend-avatar" style="background:#8A5878;">CC</div>
+        <div class="city-dot diff"></div>
+        <span class="friend-name">Catherine Collet</span>
+        <div class="friend-btns">
+          <button class="btn-action btn-travel" onclick="showToast('Arranging travel...')">✈️ Travel</button>
+          <button class="btn-action btn-call"   onclick="showToast('Calling Catherine...')">📞 Call</button>
+        </div>
+      </div>
+
+    </div><!-- /social-block -->
+
+    <!-- ── RECENT DIARY ENTRIES ── -->
+    <div class="section-header">Recent Diary Entries</div>
+    <div class="diary-block">
+      <div class="diary-entry">I tried to take a picture of <a href="#">Thomas Scott</a> but my prey was too fast this time.</div>
+      <div class="diary-entry">I asked <a href="#">Cristal Bird</a> out on a date.</div>
+      <div class="diary-entry">I asked <a href="#">Rylee Bird-West</a> out on a date.</div>
+      <div class="diary-entry">Exhausted, but in bliss — <a href="#">Rylee Bird-West</a> and I finally had a <b>revolutionary</b> night together.</div>
+      <div class="diary-entry">Doing the wild thing in the <b>Infinity Pool</b> is so romantic!</div>
+      <div class="diary-entry"><a href="#">Bengü Doğanata</a> just called to say "I love you". It warms my heart!</div>
+    </div>
+
+    <!-- ── FOLLOWING (single person — all on one line) ── -->
+    <div class="section-header">Following</div>
+    <div class="following-block">
+      <div class="follow-row">
+        <div class="follow-left">
+          <div class="follow-avatar" style="background:#5A7A9A;">JB</div>
+          <span class="follow-name">John Bliss</span>
+          <span class="follow-detail"> · Tallinn · </span>
+          <span class="follow-status online">online</span>
+        </div>
+        <button class="btn-follow-active" onclick="showToast('Unfollowed John Bliss')">★ Following</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <div class="nav-tab" onclick="window.location='01-home.html'">
+      <span class="nav-icon">🏠</span><span>Home</span>
+    </div>
+    <div class="nav-tab active">
+      <span class="nav-icon">👤</span><span>Profile</span>
+    </div>
+    <div class="nav-tab">
+      <span class="nav-icon">🎸</span><span>Band</span>
+    </div>
+    <div class="nav-tab">
+      <span class="nav-icon">📅</span><span>Tour</span>
+    </div>
+    <div class="nav-tab" style="position:relative;">
+      <span class="nav-icon">💬</span>
+      <span class="nav-badge">23</span>
+      <span>Chat</span>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+</div>
+
+<script>
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    t.style.animation = 'none';
+    void t.offsetWidth;
+    t.style.animation = 'fadeout 2s forwards';
+    setTimeout(() => { t.style.display = 'none'; }, 2100);
+  }
+</script>
+</body>
+</html>
