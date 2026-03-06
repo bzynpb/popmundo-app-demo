@@ -2,7 +2,7 @@
 
 An interactive mobile app concept for [Popmundo](https://www.popmundo.com) — the browser-based music simulation game. Built and designed by a long-time player.
 
-**Live demo → [zenviolabs.github.io/popmundo-app-demo](https://zenviolabs.github.io/popmundo-app-demo)**
+**Live demo → [zenviolabs.github.io/popmundo-app-demo](https://bzynpb.github.io/popmundo-app-demo)**
 
 ---
 
